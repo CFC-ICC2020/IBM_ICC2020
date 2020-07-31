@@ -1,0 +1,1686 @@
+[
+    {
+        "id": "d13ddcc7.18e3e",
+        "type": "tab",
+        "label": "Water Usage data",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "a5ad8930.5658d8",
+        "type": "inject",
+        "z": "d13ddcc7.18e3e",
+        "name": "Inject every 1 hour",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "0 0-23 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "Inject",
+        "payloadType": "str",
+        "x": 170,
+        "y": 140,
+        "wires": [
+            [
+                "52dda74.3635d58"
+            ]
+        ]
+    },
+    {
+        "id": "844bef98.7604b",
+        "type": "comment",
+        "z": "d13ddcc7.18e3e",
+        "name": "Creating Input to Water UsageSensor based on time",
+        "info": "Since household water usage varies with time, sensor data has been followed with below assumptions to get a real time simulation.\n\nTime_range..........Usage_range(in litres)\n6 A.M to 9 A.M...... 20 to 50\n9 A.M to 12 P.M..... 50 to 120\n12 P.M to 5 P.M..... 5 to 10\n5 P.M to 10 P.M..... 20 to 50\n10 P.M to 6 A.M..... 0 to 5",
+        "x": 190,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "52dda74.3635d58",
+        "type": "python3-function",
+        "z": "d13ddcc7.18e3e",
+        "name": "Creating time and date payload",
+        "func": "from datetime import datetime\ncurrent_time = datetime.now()\nout_date = current_time.strftime(\"%m/%d/%Y\")\nout_time = current_time.strftime(\"%H:%M:%S\")\ndata = {}\ndata[\"date\"] = out_date\ndata[\"time\"] = out_time\nmsg[\"payload\"] = data\nreturn msg",
+        "outputs": 1,
+        "x": 170,
+        "y": 200,
+        "wires": [
+            [
+                "23b01890.fd6a58",
+                "ffaab2bc.63505"
+            ]
+        ]
+    },
+    {
+        "id": "23b01890.fd6a58",
+        "type": "python3-function",
+        "z": "d13ddcc7.18e3e",
+        "name": "Getting current time",
+        "func": "from datetime import datetime\ncurrent_hour = datetime.now().strftime(\"%H\")\nmsg[\"payload\"] = current_hour\nreturn msg",
+        "outputs": 1,
+        "x": 150,
+        "y": 260,
+        "wires": [
+            [
+                "6a0222f0.e9597c",
+                "ffaab2bc.63505"
+            ]
+        ]
+    },
+    {
+        "id": "6a0222f0.e9597c",
+        "type": "switch",
+        "z": "d13ddcc7.18e3e",
+        "name": "Setting water usage payload",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "btwn",
+                "v": "6",
+                "vt": "num",
+                "v2": "9",
+                "v2t": "num"
+            },
+            {
+                "t": "btwn",
+                "v": "10",
+                "vt": "num",
+                "v2": "12",
+                "v2t": "num"
+            },
+            {
+                "t": "btwn",
+                "v": "13",
+                "vt": "num",
+                "v2": "17",
+                "v2t": "num"
+            },
+            {
+                "t": "btwn",
+                "v": "18",
+                "vt": "num",
+                "v2": "21",
+                "v2t": "num"
+            },
+            {
+                "t": "btwn",
+                "v": "22",
+                "vt": "num",
+                "v2": "24",
+                "v2t": "num"
+            },
+            {
+                "t": "btwn",
+                "v": "0",
+                "vt": "num",
+                "v2": "5",
+                "v2t": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 6,
+        "x": 380,
+        "y": 300,
+        "wires": [
+            [
+                "6ceeb9bb.b61e78"
+            ],
+            [
+                "762f0d67.763c64"
+            ],
+            [
+                "8e1e78a3.7fd568"
+            ],
+            [
+                "15a67ddb.25f1c2"
+            ],
+            [
+                "6d5d22e9.f5ad0c"
+            ],
+            [
+                "d6ba5bee.3c3538"
+            ]
+        ],
+        "info": "Setting water usage data based on time interval mentioned in Comment"
+    },
+    {
+        "id": "6ceeb9bb.b61e78",
+        "type": "python3-function",
+        "z": "d13ddcc7.18e3e",
+        "name": "Water_Usage (6 am to 10 am)",
+        "func": "import random\nusage = random.randint(5,15)\ndata = {}\ndata[\"usage_level\"] = usage\nmsg[\"payload\"] = data\nreturn msg",
+        "outputs": 1,
+        "x": 690,
+        "y": 80,
+        "wires": [
+            [
+                "59382b51.cb4794",
+                "467cd040.9a4dd"
+            ]
+        ]
+    },
+    {
+        "id": "762f0d67.763c64",
+        "type": "python3-function",
+        "z": "d13ddcc7.18e3e",
+        "name": "Water Usage (10 am to 1 pm)",
+        "func": "import random\nusage = random.randint(20,40)\ndata = {}\ndata[\"usage_level\"] = usage\nmsg[\"payload\"] = data\nreturn msg",
+        "outputs": 1,
+        "x": 690,
+        "y": 160,
+        "wires": [
+            [
+                "59382b51.cb4794",
+                "467cd040.9a4dd"
+            ]
+        ]
+    },
+    {
+        "id": "8e1e78a3.7fd568",
+        "type": "python3-function",
+        "z": "d13ddcc7.18e3e",
+        "name": "Water_Usage (1 pm to 5 pm)",
+        "func": "import random\nusage = random.randint(0,10)\ndata = {}\ndata[\"usage_level\"] = usage\nmsg[\"payload\"] = data\nreturn msg",
+        "outputs": 1,
+        "x": 680,
+        "y": 260,
+        "wires": [
+            [
+                "59382b51.cb4794",
+                "467cd040.9a4dd"
+            ]
+        ]
+    },
+    {
+        "id": "15a67ddb.25f1c2",
+        "type": "python3-function",
+        "z": "d13ddcc7.18e3e",
+        "name": "Water_Usage (5 pm to 10 pm)",
+        "func": "import random\nusage = random.randint(15,20)\ndata = {}\ndata[\"usage_level\"] = usage\nmsg[\"payload\"] = data\nreturn msg",
+        "outputs": 1,
+        "x": 690,
+        "y": 340,
+        "wires": [
+            [
+                "59382b51.cb4794",
+                "467cd040.9a4dd"
+            ]
+        ]
+    },
+    {
+        "id": "6d5d22e9.f5ad0c",
+        "type": "python3-function",
+        "z": "d13ddcc7.18e3e",
+        "name": "Water_Usage (10 pm to 6 am)",
+        "func": "import random\nusage = random.randint(0,5)\ndata = {}\ndata[\"usage_level\"] = usage\nmsg[\"payload\"] = data\nreturn msg",
+        "outputs": 1,
+        "x": 690,
+        "y": 420,
+        "wires": [
+            [
+                "59382b51.cb4794",
+                "467cd040.9a4dd"
+            ]
+        ]
+    },
+    {
+        "id": "59382b51.cb4794",
+        "type": "debug",
+        "z": "d13ddcc7.18e3e",
+        "name": "Usage_value",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1050,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "ffaab2bc.63505",
+        "type": "debug",
+        "z": "d13ddcc7.18e3e",
+        "name": "Time (only Hour)",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 350,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "467cd040.9a4dd",
+        "type": "ibmiot out",
+        "z": "d13ddcc7.18e3e",
+        "authentication": "boundService",
+        "apiKey": "af74ada5.8527",
+        "outputType": "evt",
+        "deviceId": "Hosue_ICC2020-flow_sensor",
+        "deviceType": "Water_usage_House_ICC2020",
+        "eventCommandType": "blink",
+        "format": "json",
+        "data": "msg.payload",
+        "qos": 0,
+        "name": "IBM IoT",
+        "service": "registered",
+        "x": 1040,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "4d0ef0ec.d2d99",
+        "type": "ibmiot in",
+        "z": "d13ddcc7.18e3e",
+        "authentication": "boundService",
+        "apiKey": "af74ada5.8527",
+        "inputType": "evt",
+        "logicalInterface": "",
+        "ruleId": "",
+        "deviceId": "Hosue_ICC2020-flow_sensor",
+        "applicationId": "",
+        "deviceType": "Water_usage_House_ICC2020",
+        "eventType": "",
+        "commandType": "",
+        "format": "json",
+        "name": "IBM IoT",
+        "service": "registered",
+        "allDevices": false,
+        "allApplications": "",
+        "allDeviceTypes": false,
+        "allLogicalInterfaces": "",
+        "allEvents": true,
+        "allCommands": "",
+        "allFormats": true,
+        "qos": 0,
+        "x": 90,
+        "y": 600,
+        "wires": [
+            [
+                "5cc22e97.bce3a",
+                "4ee1d0f0.6d6fb"
+            ]
+        ]
+    },
+    {
+        "id": "17cdb6c0.669929",
+        "type": "comment",
+        "z": "d13ddcc7.18e3e",
+        "name": "Uploading sensor data to Cloudant",
+        "info": "Water Usage Data from various house has to be uploaded to cloudant DB",
+        "x": 140,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "5cc22e97.bce3a",
+        "type": "python3-function",
+        "z": "d13ddcc7.18e3e",
+        "name": "Creating time and date payload",
+        "func": "from datetime import datetime\ncurrent_time = datetime.now()\nout_date = current_time.strftime(\"%m/%d/%Y\")\nout_time = current_time.strftime(\"%H:%M:%S\")\nusage = msg[\"payload\"][\"usage_level\"]\ndata = {}\ndata[\"date\"] = out_date\ndata[\"timestamp\"] = out_date + \" \" +out_time\ndata[\"water_usage\"] = usage\nmsg[\"payload\"] = data\nreturn msg",
+        "outputs": 1,
+        "x": 310,
+        "y": 600,
+        "wires": [
+            [
+                "4e99296b.ae7388"
+            ]
+        ]
+    },
+    {
+        "id": "4e99296b.ae7388",
+        "type": "cloudant out",
+        "z": "d13ddcc7.18e3e",
+        "name": "Insert Usage data in DB",
+        "cloudant": "",
+        "database": "db_houseicc2020_usage",
+        "service": "node-red-icc2020-cloudant-1595495333323-97993",
+        "payonly": true,
+        "operation": "insert",
+        "x": 590,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "d4f8dcb7.4997c",
+        "type": "http request",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://84d13278-4ec4-4108-9e08-5cd95383d482-bluemix.cloudantnosqldb.appdomain.cloud/db_houseicc2020_usage/_design/getByDate/_view/new-view",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "basic",
+        "x": 270,
+        "y": 840,
+        "wires": [
+            [
+                "a0836e68.4355e"
+            ]
+        ]
+    },
+    {
+        "id": "a0836e68.4355e",
+        "type": "json",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 290,
+        "y": 900,
+        "wires": [
+            [
+                "40cfe223.ef8fbc"
+            ]
+        ]
+    },
+    {
+        "id": "4baa89c5.9b16e8",
+        "type": "ui_chart",
+        "z": "d13ddcc7.18e3e",
+        "name": "WL Data House ICC2020",
+        "group": "f17a23e5.81aff",
+        "order": 2,
+        "width": 9,
+        "height": 9,
+        "label": "Water Usage Trend",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm",
+        "interpolate": "linear",
+        "nodata": "WL Data House ICC2020",
+        "dot": true,
+        "ymin": "0",
+        "ymax": "100",
+        "removeOlder": "1",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "86400",
+        "cutout": 0,
+        "useOneColor": true,
+        "useUTC": true,
+        "colors": [
+            "#49a3e4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#209720",
+            "#98df8a",
+            "#db2929",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "outputs": 1,
+        "x": 610,
+        "y": 740,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4ee1d0f0.6d6fb",
+        "type": "change",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.usage_level",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 280,
+        "y": 700,
+        "wires": [
+            [
+                "4baa89c5.9b16e8",
+                "31134b0d.4f47d4"
+            ]
+        ]
+    },
+    {
+        "id": "31134b0d.4f47d4",
+        "type": "debug",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 570,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "6bfe76b5.bc8908",
+        "type": "debug",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 1040,
+        "wires": []
+    },
+    {
+        "id": "44e891c6.19f46",
+        "type": "inject",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "00 00 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "HI",
+        "payloadType": "msg",
+        "x": 70,
+        "y": 840,
+        "wires": [
+            [
+                "d4f8dcb7.4997c",
+                "ca9a7f1b.013e",
+                "c6ec2480.84f428"
+            ]
+        ]
+    },
+    {
+        "id": "40cfe223.ef8fbc",
+        "type": "change",
+        "z": "d13ddcc7.18e3e",
+        "name": "Set payload data",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.rows",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 510,
+        "y": 900,
+        "wires": [
+            [
+                "aca3c94b.c54758"
+            ]
+        ]
+    },
+    {
+        "id": "aca3c94b.c54758",
+        "type": "function",
+        "z": "d13ddcc7.18e3e",
+        "name": "Get Consolidated Usage",
+        "func": "var sum = msg.payload[0].value;\nmsg = {payload: {\"water_usage_data\": sum}};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 530,
+        "y": 980,
+        "wires": [
+            [
+                "d149f53b.428258",
+                "24ae37f4.736908"
+            ]
+        ]
+    },
+    {
+        "id": "d149f53b.428258",
+        "type": "python3-function",
+        "z": "d13ddcc7.18e3e",
+        "name": "Defining db data - houseicc_water_usage",
+        "func": "from datetime import date \nfrom datetime import timedelta \nfrom datetime import datetime\n  \nPrevious_Date = datetime.today() - timedelta(days=1)\ndate = Previous_Date.strftime ('%m/%d/%Y')\n \ntotal_usage = msg[\"payload\"][\"water_usage_data\"]\ndata = {}\ndata[\"Date\"] = date\ndata[\"cnsldtd_water_usage\"] = total_usage\nmsg[\"payload\"] = data\nreturn msg",
+        "outputs": 1,
+        "x": 540,
+        "y": 1040,
+        "wires": [
+            [
+                "6bfe76b5.bc8908",
+                "fbc2e92b.272568"
+            ]
+        ]
+    },
+    {
+        "id": "fbc2e92b.272568",
+        "type": "cloudant out",
+        "z": "d13ddcc7.18e3e",
+        "name": "Upload Consolidated usage",
+        "cloudant": "",
+        "database": "houseicc_daily_usage",
+        "service": "node-red-icc2020-cloudant-1595495333323-97993",
+        "payonly": true,
+        "operation": "insert",
+        "x": 540,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "c7e2b8a3.979ea8",
+        "type": "comment",
+        "z": "d13ddcc7.18e3e",
+        "name": "Uploading Consolidated usage data to Cloudant",
+        "info": "",
+        "x": 180,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "846f72b6.08ac7",
+        "type": "comment",
+        "z": "d13ddcc7.18e3e",
+        "name": "Updating quantity of water available",
+        "info": "# Water Availability is calculated as follows:\n\n# Water available = {Water in hand} - {Water Usage} +                     {Water recharge based on season}\n\n**Water Usage** - Calculated using IoT sensors\n**Water Recharge** - Depends on various factors like rainfall, humididty, irrigation pattern etc..\n\nTaken into consideration of all factors Seasonal impact plays a vital role.\n\nSegregating recharge with seasons and taking recharge in %age of Water Usage.\n\n`Season` ------------- `Water Recharg(%age of                            water usage)`\n\n * Summer ------------- 0%\n * Winter ------------- 15%\n * Monsoon ------------ 25%\n * Autumn ------------- 5%\n * Spring ------------- 10%",
+        "x": 140,
+        "y": 1180,
+        "wires": []
+    },
+    {
+        "id": "67af6e5d.81352",
+        "type": "python3-function",
+        "z": "d13ddcc7.18e3e",
+        "name": "Summer recharge",
+        "func": "data = {}\ndata[\"percent\"] = 0\nmsg[\"payload\"] = data\nreturn msg",
+        "outputs": 1,
+        "x": 670,
+        "y": 1220,
+        "wires": [
+            [
+                "db98994a.719298",
+                "24ae37f4.736908"
+            ]
+        ]
+    },
+    {
+        "id": "ca9a7f1b.013e",
+        "type": "function",
+        "z": "d13ddcc7.18e3e",
+        "name": "Getting current month",
+        "func": "var d = new Date();\nvar date = d.getMonth();\nvar month = new Array();\n  month[0] = \"Winter\";\n  month[1] = \"Winter\";\n  month[2] = \"Spring\";\n  month[3] = \"Spring\";\n  month[4] = \"Spring\";\n  month[5] = \"Summer\";\n  month[6] = \"Summer\";\n  month[7] = \"Summer\";\n  month[8] = \"Autumn\";\n  month[9] = \"Autumn\";\n  month[10] = \"Autumn\";\n  month[11] = \"Winter\";\nvar cur_month = month[d.getMonth()] ;\nmsg.payload = cur_month;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 140,
+        "y": 1280,
+        "wires": [
+            [
+                "1cfee96c.976fe7"
+            ]
+        ]
+    },
+    {
+        "id": "1cfee96c.976fe7",
+        "type": "switch",
+        "z": "d13ddcc7.18e3e",
+        "name": "Getting %age recharge",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Summer",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Winter",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Spring",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Autumn",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 4,
+        "x": 410,
+        "y": 1280,
+        "wires": [
+            [
+                "67af6e5d.81352"
+            ],
+            [
+                "d4e067fc.bbc278"
+            ],
+            [
+                "479c803a.2eff7"
+            ],
+            [
+                "13b3d000.0a005"
+            ]
+        ]
+    },
+    {
+        "id": "479c803a.2eff7",
+        "type": "python3-function",
+        "z": "d13ddcc7.18e3e",
+        "name": "Spring Recharge",
+        "func": "data = {}\ndata[\"percent\"] = 5\nmsg[\"payload\"] = data\nreturn msg",
+        "outputs": 1,
+        "x": 670,
+        "y": 1300,
+        "wires": [
+            [
+                "db98994a.719298",
+                "24ae37f4.736908"
+            ]
+        ]
+    },
+    {
+        "id": "13b3d000.0a005",
+        "type": "python3-function",
+        "z": "d13ddcc7.18e3e",
+        "name": "Autumn Recharge",
+        "func": "data = {}\ndata[\"percent\"] = 15\nmsg[\"payload\"] = data\nreturn msg",
+        "outputs": 1,
+        "x": 670,
+        "y": 1340,
+        "wires": [
+            [
+                "db98994a.719298",
+                "24ae37f4.736908"
+            ]
+        ]
+    },
+    {
+        "id": "d4e067fc.bbc278",
+        "type": "python3-function",
+        "z": "d13ddcc7.18e3e",
+        "name": "Winter Recharge",
+        "func": "data = {}\ndata[\"percent\"] = 10\nmsg[\"payload\"] = data\nreturn msg",
+        "outputs": 1,
+        "x": 670,
+        "y": 1260,
+        "wires": [
+            [
+                "db98994a.719298",
+                "24ae37f4.736908"
+            ]
+        ]
+    },
+    {
+        "id": "db98994a.719298",
+        "type": "debug",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 960,
+        "y": 1200,
+        "wires": []
+    },
+    {
+        "id": "c6ec2480.84f428",
+        "type": "http request",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://84d13278-4ec4-4108-9e08-5cd95383d482-bluemix.cloudantnosqldb.appdomain.cloud/db_water_store/_design/getByDate/_view/lastday-view",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "basic",
+        "x": 130,
+        "y": 1380,
+        "wires": [
+            [
+                "879400bd.97b43"
+            ]
+        ]
+    },
+    {
+        "id": "879400bd.97b43",
+        "type": "json",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 410,
+        "y": 1440,
+        "wires": [
+            [
+                "87c7a7a4.737c58"
+            ]
+        ]
+    },
+    {
+        "id": "87c7a7a4.737c58",
+        "type": "change",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.rows[0].value",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 640,
+        "y": 1440,
+        "wires": [
+            [
+                "2bb39bd5.a31fb4"
+            ]
+        ]
+    },
+    {
+        "id": "348cc70e.78c928",
+        "type": "debug",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1130,
+        "y": 1320,
+        "wires": []
+    },
+    {
+        "id": "24ae37f4.736908",
+        "type": "join",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "mode": "custom",
+        "build": "array",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "3",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 970,
+        "y": 1320,
+        "wires": [
+            [
+                "348cc70e.78c928",
+                "8d917fae.01fff"
+            ]
+        ]
+    },
+    {
+        "id": "2bb39bd5.a31fb4",
+        "type": "function",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "func": "var water = msg.payload;\nmsg.payload = {\"water_available\":water};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 740,
+        "y": 1500,
+        "wires": [
+            [
+                "24ae37f4.736908",
+                "709beac6.b65704"
+            ]
+        ]
+    },
+    {
+        "id": "8d917fae.01fff",
+        "type": "python3-function",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "func": "data = msg['payload']\nnew_dict = dict((key,d[key]) for d in data for key in d)\nmsg['payload'] = new_dict\nreturn msg",
+        "outputs": 1,
+        "x": 970,
+        "y": 1440,
+        "wires": [
+            [
+                "cfa30aa9.251e68",
+                "74f8bed6.15905"
+            ]
+        ]
+    },
+    {
+        "id": "cfa30aa9.251e68",
+        "type": "python3-function",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "func": "from datetime import datetime\ndate = datetime.now().strftime(\"%m/%d/%Y\")\n\nusage = msg['payload']['water_usage_data']\npercent = msg['payload']['percent']\nwater_available = msg['payload']['water_available']\n\nrecharge = usage * (percent / 100.0)\nwater_available_in_store = water_available + recharge - usage\n\ndata = {}\n\ndata['water_available'] = water_available_in_store\ndata['date'] = date\nmsg['payload'] = data\nreturn msg",
+        "outputs": 1,
+        "x": 970,
+        "y": 1500,
+        "wires": [
+            [
+                "74f8bed6.15905",
+                "be3af9ac.dcd358",
+                "9f3c16df.38f168"
+            ]
+        ]
+    },
+    {
+        "id": "74f8bed6.15905",
+        "type": "debug",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 970,
+        "y": 1560,
+        "wires": []
+    },
+    {
+        "id": "be3af9ac.dcd358",
+        "type": "change",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.water_available",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1220,
+        "y": 1500,
+        "wires": [
+            [
+                "43d133ea.b9c3dc"
+            ]
+        ]
+    },
+    {
+        "id": "43d133ea.b9c3dc",
+        "type": "ui_gauge",
+        "z": "d13ddcc7.18e3e",
+        "name": "Water Storage Level",
+        "group": "f17a23e5.81aff",
+        "order": 1,
+        "width": 9,
+        "height": 9,
+        "gtype": "wave",
+        "title": "Water Storage Level",
+        "label": " L",
+        "format": "{{value | number:50}}%",
+        "min": "0",
+        "max": "10000",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ff0000"
+        ],
+        "seg1": "10",
+        "seg2": "50",
+        "x": 1240,
+        "y": 1560,
+        "wires": []
+    },
+    {
+        "id": "9f3c16df.38f168",
+        "type": "cloudant out",
+        "z": "d13ddcc7.18e3e",
+        "name": "Update water data to DB",
+        "cloudant": "",
+        "database": "db_water_store",
+        "service": "node-red-icc2020-cloudant-1595495333323-97993",
+        "payonly": true,
+        "operation": "insert",
+        "x": 1290,
+        "y": 1440,
+        "wires": []
+    },
+    {
+        "id": "c5f41fb2.73a41",
+        "type": "comment",
+        "z": "d13ddcc7.18e3e",
+        "name": "Creatind a chat bot link to display prediction model",
+        "info": "Defining ML models are categorized based on seasons.\n\n * ML- Summer\n * ML- Winter\n * ML- Autumn\n * ML- Spring\n \nSince the recharge varies with seasons, evaporation and other multiple factors, we considered to follow prediction model based on seasons \n",
+        "x": 190,
+        "y": 1700,
+        "wires": []
+    },
+    {
+        "id": "d6ba5bee.3c3538",
+        "type": "python3-function",
+        "z": "d13ddcc7.18e3e",
+        "name": "Water_Usage (0 am to 6 am)",
+        "func": "import random\nusage = random.randint(0,5)\ndata = {}\ndata[\"usage_level\"] = usage\nmsg[\"payload\"] = data\nreturn msg",
+        "outputs": 1,
+        "x": 680,
+        "y": 480,
+        "wires": [
+            [
+                "467cd040.9a4dd",
+                "59382b51.cb4794"
+            ]
+        ]
+    },
+    {
+        "id": "8cf3d7d1.6185c8",
+        "type": "wml",
+        "z": "d13ddcc7.18e3e",
+        "name": "Summer prediction model",
+        "connection": "1100f65f.1e07ca",
+        "wml-mode": "runPrediction",
+        "model": "c75f1cbf-6b62-4bd1-a143-94c369064e71",
+        "deployment": "2ec71e75-5635-4d3a-856e-a9c6df2cf057",
+        "modelhidden": "c75f1cbf-6b62-4bd1-a143-94c369064e71",
+        "deploymenthidden": "",
+        "x": 650,
+        "y": 1880,
+        "wires": [
+            [
+                "eeed85c8.efcc58",
+                "80ade953.36ccc8"
+            ]
+        ]
+    },
+    {
+        "id": "c7df49e8.18c7e8",
+        "type": "switch",
+        "z": "d13ddcc7.18e3e",
+        "name": "Getting %age recharge",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Summer",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Winter",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Spring",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Autumn",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 4,
+        "x": 230,
+        "y": 1960,
+        "wires": [
+            [
+                "cb75f8ea.bf2ea8"
+            ],
+            [
+                "1f321c5d.79b6f4"
+            ],
+            [
+                "4e2beaef.00ca64"
+            ],
+            [
+                "8e4c67bf.1d26b8"
+            ]
+        ]
+    },
+    {
+        "id": "8827230a.ac44b",
+        "type": "function",
+        "z": "d13ddcc7.18e3e",
+        "name": "Getting current month",
+        "func": "var d = new Date();\nvar date = d.getMonth();\nvar month = new Array();\n  month[0] = \"Winter\";\n  month[1] = \"Winter\";\n  month[2] = \"Spring\";\n  month[3] = \"Spring\";\n  month[4] = \"Spring\";\n  month[5] = \"Summer\";\n  month[6] = \"Summer\";\n  month[7] = \"Summer\";\n  month[8] = \"Autumn\";\n  month[9] = \"Autumn\";\n  month[10] = \"Autumn\";\n  month[11] = \"Winter\";\nvar cur_month = month[d.getMonth()] ;\nmsg.payload = cur_month;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 320,
+        "y": 1860,
+        "wires": [
+            [
+                "c7df49e8.18c7e8"
+            ]
+        ]
+    },
+    {
+        "id": "79fdc281.30801c",
+        "type": "http in",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "url": "/predict",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 130,
+        "y": 1780,
+        "wires": [
+            [
+                "8827230a.ac44b"
+            ]
+        ]
+    },
+    {
+        "id": "587977b2.662838",
+        "type": "wml",
+        "z": "d13ddcc7.18e3e",
+        "name": "Winter prediction model",
+        "connection": "1100f65f.1e07ca",
+        "wml-mode": "runPrediction",
+        "model": "17e08bc3-e03f-4b72-8d23-d5baa222a061",
+        "deployment": "bc2378d8-5d72-4f97-bc27-801929e9315e",
+        "modelhidden": "17e08bc3-e03f-4b72-8d23-d5baa222a061",
+        "deploymenthidden": "",
+        "x": 650,
+        "y": 1920,
+        "wires": [
+            [
+                "eeed85c8.efcc58",
+                "80ade953.36ccc8"
+            ]
+        ]
+    },
+    {
+        "id": "fcb15f81.2b6f4",
+        "type": "wml",
+        "z": "d13ddcc7.18e3e",
+        "name": "Spring prediction model",
+        "connection": "1100f65f.1e07ca",
+        "wml-mode": "runPrediction",
+        "model": "dab32137-416b-412b-984d-2e357036612c",
+        "deployment": "dc1747eb-7675-4a64-ad17-4a7a28be4f60",
+        "modelhidden": "dab32137-416b-412b-984d-2e357036612c",
+        "deploymenthidden": "",
+        "x": 650,
+        "y": 1980,
+        "wires": [
+            [
+                "eeed85c8.efcc58",
+                "80ade953.36ccc8"
+            ]
+        ]
+    },
+    {
+        "id": "5e0d0bf6.2cd624",
+        "type": "wml",
+        "z": "d13ddcc7.18e3e",
+        "name": "Autumn prediction model",
+        "connection": "1100f65f.1e07ca",
+        "wml-mode": "runPrediction",
+        "model": "5f277a44-c477-46d0-acb5-afd8653bb848",
+        "deployment": "9ab73af3-5381-45c5-8df9-1d209792345e",
+        "modelhidden": "5f277a44-c477-46d0-acb5-afd8653bb848",
+        "deploymenthidden": "",
+        "x": 650,
+        "y": 2020,
+        "wires": [
+            [
+                "eeed85c8.efcc58",
+                "80ade953.36ccc8"
+            ]
+        ]
+    },
+    {
+        "id": "eeed85c8.efcc58",
+        "type": "debug",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 790,
+        "y": 2120,
+        "wires": []
+    },
+    {
+        "id": "709beac6.b65704",
+        "type": "debug",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 570,
+        "y": 1560,
+        "wires": []
+    },
+    {
+        "id": "cb75f8ea.bf2ea8",
+        "type": "function",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "func": "msg.payload = [0];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 440,
+        "y": 1920,
+        "wires": [
+            [
+                "8cf3d7d1.6185c8"
+            ]
+        ]
+    },
+    {
+        "id": "80ade953.36ccc8",
+        "type": "function",
+        "z": "d13ddcc7.18e3e",
+        "name": "Calculating Date",
+        "func": "var date_count = msg.payload['predictions'][0]['values'][0][0];\nvar date_cou = parseInt(date_count) - 30;\n\nvar d = new Date();\nvar date = d.getDate();\nvar cur_month = d.getMonth() +1;\nvar year = d.getFullYear();\n  \nvar current_date = cur_month + \"/\" + date + \"/\" + year;\nvar dateString = current_date;\nvar myDate = new Date(dateString);\n\n//add a day to the date\nmyDate.setDate(myDate.getDate() + date_cou);\nvar y = myDate.getFullYear(),\nm = myDate.getMonth() + 1, // january is month 0 in javascript\ndt = myDate.getDate();\nvar pad = function(val) { var str = val.toString(); return (str.length < 2) ? \"0\" + str : str};\ndateString = [y, pad(m), pad(dt)].join(\"-\");\nmsg.payload = dateString;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 820,
+        "y": 1760,
+        "wires": [
+            [
+                "d7019315.ecb1"
+            ]
+        ]
+    },
+    {
+        "id": "d7019315.ecb1",
+        "type": "template",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Day Zero</title>\n    <link rel=\"stylesheet\" href=\"https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css\" >\n</head>\n<body class='bg-dark'> \n    <div class='container-xl col-md-6 offset-sm-3 text-left bg-primary rounded ' style='margin-top:100px;'>\n        <div class='row'>\n            <div class='col text-center pt-4 pb-4'>\n                <h3>Predicted DAY ZERO </h3>\n                <h5>{{payload}}</h4>\n            </div>\n        </div>\n    </div>\n</body>\n</html>",
+        "output": "str",
+        "x": 900,
+        "y": 1860,
+        "wires": [
+            [
+                "7d152fb3.ce729"
+            ]
+        ]
+    },
+    {
+        "id": "7d152fb3.ce729",
+        "type": "http response",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 990,
+        "y": 1940,
+        "wires": []
+    },
+    {
+        "id": "1f321c5d.79b6f4",
+        "type": "function",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "func": "msg.payload = [0];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 440,
+        "y": 1980,
+        "wires": [
+            [
+                "587977b2.662838"
+            ]
+        ]
+    },
+    {
+        "id": "4e2beaef.00ca64",
+        "type": "function",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "func": "msg.payload = [0];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 440,
+        "y": 2040,
+        "wires": [
+            [
+                "fcb15f81.2b6f4"
+            ]
+        ]
+    },
+    {
+        "id": "8e4c67bf.1d26b8",
+        "type": "function",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "func": "msg.payload = [0];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 440,
+        "y": 2100,
+        "wires": [
+            [
+                "5e0d0bf6.2cd624"
+            ]
+        ]
+    },
+    {
+        "id": "49c4fee7.be084",
+        "type": "comment",
+        "z": "d13ddcc7.18e3e",
+        "name": "Getting Input from Leakage Sensor",
+        "info": "",
+        "x": 140,
+        "y": 2240,
+        "wires": []
+    },
+    {
+        "id": "6077217f.b3dd3",
+        "type": "ibmiot in",
+        "z": "d13ddcc7.18e3e",
+        "authentication": "boundService",
+        "apiKey": "af74ada5.8527",
+        "inputType": "evt",
+        "logicalInterface": "",
+        "ruleId": "",
+        "deviceId": "Leakage_sensor_House_ICC2020_1",
+        "applicationId": "",
+        "deviceType": "Leakage_sensor_House_ICC2020",
+        "eventType": "+",
+        "commandType": "",
+        "format": "json",
+        "name": "IBM IoT",
+        "service": "registered",
+        "allDevices": "",
+        "allApplications": "",
+        "allDeviceTypes": "",
+        "allLogicalInterfaces": "",
+        "allEvents": true,
+        "allCommands": "",
+        "allFormats": true,
+        "qos": 0,
+        "x": 70,
+        "y": 2300,
+        "wires": [
+            [
+                "795f78f8.922ae8",
+                "55faa31b.ba774c"
+            ]
+        ]
+    },
+    {
+        "id": "795f78f8.922ae8",
+        "type": "join",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "mode": "custom",
+        "build": "array",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "3",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 320,
+        "y": 2300,
+        "wires": [
+            [
+                "bb8e311b.7137a",
+                "e011c160.1f649"
+            ]
+        ]
+    },
+    {
+        "id": "bb8e311b.7137a",
+        "type": "python3-function",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "func": "def output_(name,pre_out):\n    out =  pre_out + \"Lekage is there in Pipe - %s. Kindly look ito it. SAVE WATER!!\\n\"%(name)\n    return out\n\ndata = msg['payload']\nout = \"\"\nfor i in data:\n    for key in i:\n        if i[key] > 0.0:\n            out = output_(key,out)\n\nmsg['payload'] = out\nreturn msg",
+        "outputs": 1,
+        "x": 390,
+        "y": 2360,
+        "wires": [
+            [
+                "993c3895.006848",
+                "2e711ab1.56ae16"
+            ]
+        ]
+    },
+    {
+        "id": "e011c160.1f649",
+        "type": "python3-function",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "func": "data = msg[\"payload\"]\n\nout = []\nfor i in data:\n    for key in i:\n        out.append(i[key])\n        \nmsg['payload'] = out\nreturn msg",
+        "outputs": 1,
+        "x": 570,
+        "y": 2300,
+        "wires": [
+            [
+                "cbe2ac9c.8df9c"
+            ]
+        ]
+    },
+    {
+        "id": "cbe2ac9c.8df9c",
+        "type": "function",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "func": "var data = msg.payload;\nvar length = data.length;\nvar msg1 = {};\nvar msg2 = {};\nvar msg3 = {};\n\nmsg1.payload = data[0];\nmsg1.topic = \"Pipe1\";\n\nmsg2.payload = data[1];\nmsg2.topic = \"Pipe2\";\n\nmsg3.payload = data[2];\nmsg3.topic = \"Pipe3\";\n\n\nreturn [[msg1,msg2,msg3]];",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 280,
+        "y": 2480,
+        "wires": [
+            [
+                "d14ae6b5.6930b8",
+                "e13c8345.25c3"
+            ]
+        ],
+        "inputLabels": [
+            "3"
+        ],
+        "outputLabels": [
+            "3"
+        ]
+    },
+    {
+        "id": "d14ae6b5.6930b8",
+        "type": "ui_chart",
+        "z": "d13ddcc7.18e3e",
+        "name": "Leakage Comparision",
+        "group": "dd13d953.aa5c18",
+        "order": 2,
+        "width": 10,
+        "height": 6,
+        "label": "Leakage Comparision",
+        "chartType": "horizontalBar",
+        "legend": "true",
+        "xformat": "HH:mm",
+        "interpolate": "linear",
+        "nodata": "Leakage Comparision",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "15",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "outputs": 1,
+        "x": 280,
+        "y": 2560,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2e711ab1.56ae16",
+        "type": "twilio out",
+        "z": "d13ddcc7.18e3e",
+        "d": true,
+        "twilio": "1319a27e.255cae",
+        "twilioType": "sms",
+        "url": "",
+        "number": "+917339140493",
+        "name": "Send SMS",
+        "x": 690,
+        "y": 2420,
+        "wires": []
+    },
+    {
+        "id": "993c3895.006848",
+        "type": "debug",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 680,
+        "y": 2500,
+        "wires": []
+    },
+    {
+        "id": "e13c8345.25c3",
+        "type": "ui_chart",
+        "z": "d13ddcc7.18e3e",
+        "name": "Leakage Trend",
+        "group": "dd13d953.aa5c18",
+        "order": 1,
+        "width": 10,
+        "height": 6,
+        "label": "Leakage Trend",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "Leakage Trend",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "10",
+        "removeOlder": 1,
+        "removeOlderPoints": "20",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "outputs": 1,
+        "x": 580,
+        "y": 2580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "55faa31b.ba774c",
+        "type": "debug",
+        "z": "d13ddcc7.18e3e",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 160,
+        "y": 2380,
+        "wires": []
+    },
+    {
+        "id": "af74ada5.8527",
+        "type": "ibmiot",
+        "z": 0,
+        "name": "blink",
+        "keepalive": "60",
+        "serverName": "qabrih.messaging.internetofthings.ibmcloud.com",
+        "cleansession": true,
+        "appId": "",
+        "shared": false
+    },
+    {
+        "id": "f17a23e5.81aff",
+        "type": "ui_group",
+        "z": "",
+        "name": "House - ICC2020",
+        "tab": "54aa8b92.682524",
+        "order": 1,
+        "disp": true,
+        "width": 18,
+        "collapse": false
+    },
+    {
+        "id": "1100f65f.1e07ca",
+        "type": "wml-config",
+        "z": "",
+        "host": "https://eu-gb.ml.cloud.ibm.com",
+        "instanceid": "279dd0cc-788b-4c55-bb56-8a90b938dd5a",
+        "name": "Node red"
+    },
+    {
+        "id": "dd13d953.aa5c18",
+        "type": "ui_group",
+        "z": "",
+        "name": "Leakage_Data",
+        "tab": "f6b29115.2a08",
+        "order": 5,
+        "disp": true,
+        "width": "20",
+        "collapse": false
+    },
+    {
+        "id": "1319a27e.255cae",
+        "type": "twilio-api",
+        "z": 0,
+        "name": "Send SMS",
+        "sid": "AC80b2209c8fe8e664d03294fa23eaf27a",
+        "from": "+13036256551"
+    },
+    {
+        "id": "54aa8b92.682524",
+        "type": "ui_tab",
+        "z": "",
+        "name": "Water Utilization",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "f6b29115.2a08",
+        "type": "ui_tab",
+        "z": "",
+        "name": " Water Leakage Data",
+        "icon": "dashboard",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    }
+]

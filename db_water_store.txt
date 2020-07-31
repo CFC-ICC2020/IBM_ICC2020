@@ -1,0 +1,26 @@
+#View to filter current date water available.
+
+
+function (doc) {
+  var month = [];
+  month[0] = "01";
+  month[1] = "02";
+  month[2] = "03";
+  month[3] = "04";
+  month[4] = "05";
+  month[5] = "06";
+  month[6] = "07";
+  month[7] = "08";
+  month[8] = "09";
+  month[9] = "10";
+  month[10] = "11";
+  month[11] = "12";
+   var d = new Date();
+   var date = d.getDate();
+   var cur_month = month[d.getMonth()] ;
+   var year = d.getFullYear();
+  
+  var current_date = cur_month + "/" + date + "/" + year;
+  if (doc.date == current_date)
+    emit("water_available", doc.water_available);
+}
