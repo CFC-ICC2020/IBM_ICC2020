@@ -66,3 +66,6 @@
 >> Periodic SMS is also configured for Leakage. 
 
 Note: Views are created to filter required data from Cloudant DB. The code for views is also provided.
+
+AUTHOR:
+raghavsankarv@gmail.com
